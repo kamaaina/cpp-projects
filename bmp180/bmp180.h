@@ -1,5 +1,5 @@
-#ifndef BMP180_H_
-#define BMP180_H_
+#ifndef _BMP180_H_
+#define _BMP180_H_
 
 // Modes
 #define BMP085_ULTRALOWPOWER     0
@@ -33,14 +33,20 @@ class BMP180
     BMP180();
     ~BMP180();
 
-    void init();
     double readTemperature();
     double readPressure();
     double readAltitude();
     double readSeaLevelPressure();
 
   private:
+    void _init();
+    int _readU16(UINT *data);
+    int _readS16(UINT *data);
+    int _readS8(UINT *data)
+
     I2C* _i2c;
+    int _cal_AC1, _cal_AC2, _cal_AC3, _cal_B1, _cal_B2, _cal_MB, _cal_MC, _cal_MD;
+    UINT16 _cal_AC4, _cal_AC5, _cal_AC6;
 };
 
-#endif /* BMP180_H_ */
+#endif /* _BMP180_H_ */

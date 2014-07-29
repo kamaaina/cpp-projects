@@ -6,9 +6,11 @@
 using namespace std;
 
 BMP180::BMP180()
-  : _i2c(0)
+  : _i2c(0), _cal_AC1(0), _cal_AC2(0), _cal_AC3(0), _cal_B1(0), _cal_B2(0), _cal_MB(0),
+    _cal_MC(0), _cal_MD(0), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
 {
   _i2c = new I2C();
+  _init();
 }
 
 BMP180::~BMP180()
@@ -17,10 +19,38 @@ BMP180::~BMP180()
   _i2c = 0;
 }
 
-void BMP180::init()
+void BMP180::_init()
 {
-  cout << "init" << endl;
-  // FIXME: read calibration
+  UINT8 data[2];
+  _cal_AC1 = _readS16(_i2c->readBytes(BMP085_CAL_AC1, data, 2));
+  _cal_AC2 = _readS16(_i2c->readBytes(BMP085_CAL_AC2, data, 2));
+  _cal_AC3 = _readS16(_i2c->readBytes(BMP085_CAL_AC3, data, 2));
+  _cal_AC4 = _readU16(_i2c->readBytes(BMP085_CAL_AC4, data, 2));
+  _cal_AC5 = _readU16(_i2c->readBytes(BMP085_CAL_AC5, data, 2));
+  _cal_AC6 = _readU16(_i2c->readBytes(BMP085_CAL_AC6, data, 2));
+#ifdef DEBUG
+  cout << "calibrated values read:" << endl;
+#endif
+}
+
+int BMP180::_readU16(UINT *data)
+{
+  return ((data[0] << 8) | data[1]);
+}
+
+int BMP180::_readS16(UINT *data)
+{
+  int hi = _readS8(data[0]);
+  int low = data[1];
+  return ((hi << 8) | data[1]);
+}
+
+int BMP180::_readS8(UINT *data)
+{
+  if (data[0] > 127)
+    return (int)data[0] - 256;
+  else
+    return (int)data[0];
 }
 
 double BMP180::readTemperature()

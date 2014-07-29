@@ -7,7 +7,7 @@ DEBUG    = 1
 CC       = g++
 CFLAGS   = -Wall
 LINC     =
-LIBS     = tinyxml
+LIBS     = 
 OBJS     = bmp180.cpp \
            test.cpp
 

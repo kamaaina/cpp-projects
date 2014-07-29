@@ -1,5 +1,5 @@
-#ifndef OLED_H
-#define OLED_H
+#ifndef SSD1306_H
+#define SSD1306_H
 
 #include <string>
 #include "../common/common.h"
@@ -16,7 +16,7 @@
 
 class I2C;
 
-class OLED
+class SSD1306
 {
    public:
       OLED  ();
@@ -41,4 +41,4 @@ class OLED
       I2C *i2c_;
 };
 
-#endif
+#endif /* SSD1306_H */

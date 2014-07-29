@@ -8,7 +8,7 @@
 #include <iostream>
 
 #define _GLCDFONT
-#include "oled.h"
+#include "ssd1306.h"
 #include "glcdfont.h"
 #include "i2c.h"
 
@@ -17,7 +17,7 @@ using namespace std;
 /************************************************************
  * Constructor
  ***********************************************************/
-OLED::OLED ()
+SSD1306::SSD1306 ()
 : screenBuf_(0), data_(0), tmp_(0), i2c_(0)
 {
    i2c_ = new I2C();
@@ -28,7 +28,7 @@ OLED::OLED ()
 /************************************************************
  * Destructor
  ************************************************************/
-OLED::~OLED()
+SSD1306::~SSD1306()
 {
    if (screenBuf_)
    {
@@ -47,7 +47,7 @@ OLED::~OLED()
  * OLED. To clear the OLED, you need to write the data to the
  * device (call writeData())
  ************************************************************/
-void OLED::clearBuffer ()
+void SSD1306::clearBuffer ()
 {
    if (screenBuf_)
       memset (screenBuf_, 0x00, (WIDTH * HEIGHT));
@@ -56,7 +56,7 @@ void OLED::clearBuffer ()
 /************************************************************
  * Clears the OLED screen
  ************************************************************/
-void OLED::clearScreen ()
+void SSD1306::clearScreen ()
 {
    clearBuffer(); // Clear internal buffer
    writeScreen(); // Write cleared buffer to screen
@@ -68,7 +68,7 @@ void OLED::clearScreen ()
  * Returns true if things were written successfully,
  * false otherwise.
  ************************************************************/
-bool OLED::writeScreen ()
+bool SSD1306::writeScreen ()
 {
    bool fOK;
    UINT16 uiIndex = 0x00;
@@ -93,14 +93,14 @@ bool OLED::writeScreen ()
 
 /************************************************************
  * Writes text that is centered for the specified row
- * 
+ *
  * Parameters:
  *   text - the string to write
  *   row  - the row to write the text to
  *
  * Returns false if the row is out of range; true for success
  ************************************************************/
-bool OLED::writeCenter (string text, UINT8 row)
+bool SSD1306::writeCenter (string text, UINT8 row)
 {
    if ((text.length()*6) <127) // If there is not more than 1 space left, don't center
       // To center, multiply # of characters * 6 (5+space), subtract the last space, then divide by 2
@@ -119,7 +119,7 @@ bool OLED::writeCenter (string text, UINT8 row)
  *
  * Returns false if the row/column is out of range; returns true otherwise
  ************************************************************/
-bool OLED::writeText (string text, UINT8 row, UINT8 col) //
+bool SSD1306::writeText (string text, UINT8 row, UINT8 col) //
 {
    UINT8 uchI, uchJ;
    UINT16 uiIndex;     // Indexes in the screen buffer
@@ -147,7 +147,7 @@ bool OLED::writeText (string text, UINT8 row, UINT8 col) //
  *
  * Returns true for success; false otherwise
  ************************************************************/
-bool OLED::init ()
+bool SSD1306::init ()
 {
    bool retval = false;
 
@@ -214,7 +214,7 @@ bool OLED::init ()
  *
  * Returns false
  ************************************************************/
-bool OLED::writeImage (UINT8* image)
+bool SSD1306::writeImage (UINT8* image)
 {
    for (int lcv=0; lcv<(WIDTH * HEIGHT); lcv++)
    {
@@ -251,7 +251,7 @@ bool OLED::writeImage (UINT8* image)
  *
  * Returns the byte with the bits reversed
  ************************************************************/
-UINT8 OLED::reverseByte (UINT8 b)
+UINT8 SSD1306::reverseByte (UINT8 b)
 {
    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
    b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
@@ -265,14 +265,14 @@ UINT8 OLED::reverseByte (UINT8 b)
  * Parameters:
  *   index - the index of the byte
  ************************************************************/
-void OLED::getTileFromBitmap (int index)
+void SSD1306::getTileFromBitmap (int index)
 {
    int step = 0;
    for (int i=0; i<TILE_SIZE; i++, step+=STEP_SIZE)
    {
       data_[i] = screenBuf_[index+step];
 #if DEBUG
-      cout << "getting byte at index: " << dec << index+step << " with value: " 
+      cout << "getting byte at index: " << dec << index+step << " with value: "
          << hex << uppercase << "0x" << (int)screenBuf_[index+step] << endl;
 #endif
    }
@@ -284,7 +284,7 @@ void OLED::getTileFromBitmap (int index)
  * Parameters:
  *   index - the index of the tile we are working with
  ************************************************************/
-void OLED::setTileInBuffer(int index)
+void SSD1306::setTileInBuffer(int index)
 {
    int step = 0;
    for (int i=0; i<TILE_SIZE; i++, step+=STEP_SIZE)
@@ -301,7 +301,7 @@ void OLED::setTileInBuffer(int index)
  * Rotates the "tile" which is the set of 8 bytes from being
  * horizontal to being vertical
  ************************************************************/
-void OLED::rotateTile()
+void SSD1306::rotateTile()
 {
    // process bits for a bytes in data
    for (int i=0; i<TILE_SIZE; i++)

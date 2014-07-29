@@ -20,7 +20,7 @@ using namespace std;
 SSD1306::SSD1306 ()
 : screenBuf_(0), data_(0), tmp_(0), i2c_(0)
 {
-   i2c_ = new I2C();
+   i2c_ = new I2C(0x3D, 0x00);
    init ();
 }
 

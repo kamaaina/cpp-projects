@@ -19,8 +19,8 @@ class I2C;
 class SSD1306
 {
    public:
-      OLED  ();
-      ~OLED ();
+      SSD1306  ();
+      ~SSD1306 ();
       void clearBuffer ();
       void clearScreen ();
       bool writeScreen ();

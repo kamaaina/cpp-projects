@@ -1,4 +1,5 @@
-PROGRAM  = bmp180-test
+PROGRAM  = image-test
+LCD_OFF  = lcd-off
 OBJDIR   = obj
 BINDIR   = bin
 $(shell mkdir -p $(OBJDIR) $(BINDIR))
@@ -8,8 +9,8 @@ CC       = g++
 CFLAGS   = -Wall -I../i2c
 LINC     = -L../i2c/bin
 LIBS     = -li2c
-OBJS     = bmp180.cpp \
-           test.cpp
+OBJS     = image-test.cpp \
+           ssd1306.cpp
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG -g
@@ -17,10 +18,13 @@ endif
 
 ALLOBJS = $(OBJS:%.cpp=$(OBJDIR)/%.o)
 
-ALL: $(PROGRAM)
+ALL: $(PROGRAM) $(LCD_OFF)
 
 $(PROGRAM): $(ALLOBJS)
 	$(CC) $(CFLAGS) -o $(BINDIR)/$@ $(ALLOBJS) $(LINC) $(LIBS)
+
+$(LCD_OFF): $(ALLOBJS)
+	$(CC) $(CFLAGS) off.cpp -o $(BINDIR)/$(LCD_OFF) $(LINC) $(LIBS)
 
 $(OBJDIR)/%.o : %.cpp
 	$(CC) $(CFLAGS) -c $*.cpp -o $(OBJDIR)/$*.o

@@ -18,7 +18,7 @@ endif
 
 ALLOBJS = $(OBJS:%.cpp=$(OBJDIR)/%.o)
 
-ALL: $(PROGRAM)
+ALL: $(LIBRARY)
 
 $(LIBRARY): $(ALLOBJS)
 	$(AR) $(ARFLAGS) -o $(BINDIR)/$@ $(ALLOBJS)

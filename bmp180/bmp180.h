@@ -1,6 +1,8 @@
 #ifndef _BMP180_H_
 #define _BMP180_H_
 
+#include "../common/common.h"
+
 // Modes
 #define BMP085_ULTRALOWPOWER     0
 #define BMP085_STANDARD          1
@@ -40,9 +42,9 @@ class BMP180
 
   private:
     void _init();
-    int _readU16(UINT *data);
-    int _readS16(UINT *data);
-    int _readS8(UINT *data)
+    int _readU16(UINT8 *data);
+    int _readS16(UINT8 *data);
+    int _readS8(UINT8 *data);
 
     I2C* _i2c;
     int _cal_AC1, _cal_AC2, _cal_AC3, _cal_B1, _cal_B2, _cal_MB, _cal_MC, _cal_MD;

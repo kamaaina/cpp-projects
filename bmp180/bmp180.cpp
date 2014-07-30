@@ -34,6 +34,12 @@ void BMP180::_init()
   _cal_AC5 = _readU16(data);
   _i2c->readBytes(BMP085_CAL_AC6, data, 2);
   _cal_AC6 = _readU16(data);
+  _i2c->readBytes(BMT085_CAL_B1, data, 2);
+  _cal_B1 = _readS16(data);
+  _i2c->readBytes(BMT085_CAL_B2, data, 2);
+  _cal_B2 = _readS16(data);
+  _i2c->readBytes(BMT085_CAL_MB, data, 2);
+  _cal_MB = _readS16(data);
   _i2c->readBytes(BMP085_CAL_MC, data, 2);
   _cal_MC = _readS16(data);
   _i2c->readBytes(BMP085_CAL_MD, data, 2);
@@ -46,6 +52,9 @@ void BMP180::_init()
   cout << "_cal_AC4: " << _cal_AC4 << endl;
   cout << "_cal_AC5: " << _cal_AC5 << endl;
   cout << "_cal_AC6: " << _cal_AC6 << endl;
+  cout << "_cal_B1: " << _cal_B1 << endl;
+  cout << "_cal_B2: " << _cal_B2 << endl;
+  cout << "_cal_MB: " << _cal_MB << endl;
   cout << "_cal_MC: " << _cal_MC << endl;
   cout << "_cal_MD: " << _cal_MD << endl;
 #endif

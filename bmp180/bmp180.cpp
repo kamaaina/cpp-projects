@@ -34,11 +34,11 @@ void BMP180::_init()
   _cal_AC5 = _readU16(data);
   _i2c->readBytes(BMP085_CAL_AC6, data, 2);
   _cal_AC6 = _readU16(data);
-  _i2c->readBytes(BMT085_CAL_B1, data, 2);
+  _i2c->readBytes(BMP085_CAL_B1, data, 2);
   _cal_B1 = _readS16(data);
-  _i2c->readBytes(BMT085_CAL_B2, data, 2);
+  _i2c->readBytes(BMP085_CAL_B2, data, 2);
   _cal_B2 = _readS16(data);
-  _i2c->readBytes(BMT085_CAL_MB, data, 2);
+  _i2c->readBytes(BMP085_CAL_MB, data, 2);
   _cal_MB = _readS16(data);
   _i2c->readBytes(BMP085_CAL_MC, data, 2);
   _cal_MC = _readS16(data);

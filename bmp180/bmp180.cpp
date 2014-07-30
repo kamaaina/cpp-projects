@@ -2,6 +2,7 @@
 #include "i2c.h"
 #include <iostream>
 #include <unistd.h>
+#include <math.h>
 
 using namespace std;
 
@@ -92,11 +93,11 @@ double BMP180::readTemperature()
   return temp;
 }
 
-double BMP180::readPressure()
+UINT16 BMP180::readPressure()
 {
   UINT16 UT = _readRawTemperature();
   UINT16 UP = _readRawPressure();
-  double p = 0;
+  UINT16 p = 0x00;
 
   // temperature
   int X1 = ((UT - _cal_AC6) * _cal_AC5) >> 15;
@@ -114,7 +115,7 @@ double BMP180::readPressure()
   X2 = (_cal_B1 * ((B6 * B6) >> 12)) >> 16;
   X3 = ((X1 + X2) + 2) >> 2;
   int B4 = (_cal_AC4 * (X3 + 32768)) >> 15;
-  int B7 = (UP - B3) * (50000 >> _mode);
+  UINT16 B7 = (UP - B3) * (50000 >> _mode);
 
   if (B7 < 0x80000000)
     p = (B7 * 2) / B4;
@@ -126,7 +127,9 @@ double BMP180::readPressure()
   X2 = (-7357 * p) >> 16;
 
   p = p + ((X1 + X2 + 3791) >> 4);
-
+#ifdef DEBUG
+  cout << "pressure: " << std::dec << p << endl;
+#endif
   return p;
 }
 
@@ -135,6 +138,9 @@ double BMP180::readAltitude(UINT16 seaLevelPressure)
   double altitude = 0;
   float pressure = readPressure();
   altitude = 44330.0 * (1.0 - pow(pressure / seaLevelPressure, 0.1903));
+#ifdef DEBUG
+  cout << "altitude: " << std::dec << altitude << endl;
+#endif
   return altitude;
 }
 

@@ -36,7 +36,7 @@ class BMP180
     ~BMP180();
 
     double readTemperature();
-    double readPressure();
+    UINT16 readPressure();
     double readAltitude(UINT16 seaLevelPressure=101325);
     double readSeaLevelPressure();
 

@@ -50,7 +50,7 @@ void I2C::init()
    {
 #ifdef DEBUG
       std::cerr << "could not find device on address: 0x" <<  std::hex
-         << std::uppercase << deviceAddr_ << ". No data will be written."
+         << std::uppercase << (int)deviceAddr_ << ". No data will be written."
          << std::endl;
 #endif
       close(device_);
@@ -81,7 +81,7 @@ bool I2C::writeCommand(int numBytesToWrite, ...)
    bool retVal = false;
    UINT8 *data = new UINT8[numBytesToWrite+1];
    memset (data, 0, numBytesToWrite+1);
-   data[0] = 0xF4; // send control byte and then cmd(s)
+   data[0] = control_; // send control byte and then cmd(s)
 
    va_start (arguments, numBytesToWrite);
    for (int i=1; i<numBytesToWrite+1; i++)
@@ -123,7 +123,7 @@ bool I2C::writeBytes (UINT8 *data, int size)
    if (write(device_, data, size) != size)
    {
 #ifdef DEBUG
-      std::cerr << "Error writing to i2c " << std::hex << deviceAddr_ << std::endl;
+      std::cerr << "Error writing to i2c " << std::hex << (int)deviceAddr_ << std::endl;
 #endif
       return false;
    }

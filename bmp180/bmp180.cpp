@@ -5,9 +5,9 @@
 
 using namespace std;
 
-BMP180::BMP180()
+BMP180::BMP180(int mode=BMP085_STANDARD)
   : _i2c(0), _cal_AC1(0), _cal_AC2(0), _cal_AC3(0), _cal_B1(0), _cal_B2(0), _cal_MB(0),
-    _cal_MC(0), _cal_MD(0), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
+    _cal_MC(0), _cal_MD(0), , _mode(mode), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
 {
   _i2c = new I2C(0x77, 0xF4);
   _init();
@@ -81,25 +81,15 @@ int BMP180::_readS8(UINT8 *data)
 
 double BMP180::readTemperature()
 {
-  UINT8 data[2];
-  UINT16 rawTemp;
-  _i2c->writeCommand (1, 0x2E);
-  usleep(100);
-  bool retval = _i2c->readBytes(BMP085_TEMPDATA, data, 2);
-  if (retval)
-  {
-    rawTemp = (data[0] << 8) | data[1];
+  UINT16 rawTemp = _readRawTemperature();
+  int X1 = ((rawTemp - _cal_AC6) * _cal_AC5) >> 15;
+  int X2 = ((_cal_MC << 11) / (X1 + _cal_MD));
+  int B5 = X1 + X2;
+  double temp = ((B5 + 8) >> 4) / 10.0;
 #ifdef DEBUG
-    cout << "raw temperature: 0x" << std::hex << rawTemp << endl;
+  cout << "temp: " << std::dec << temp << " C" << endl;
 #endif
-    int X1 = ((rawTemp - _cal_AC6) * _cal_AC5) >> 15;
-    int X2 = ((_cal_MC << 11) / (X1 + _cal_MD));
-    int B5 = X1 + X2;
-    double temp = ((B5 + 8) >> 4) / 10.0;
-#ifdef DEBUG
-    cout << "temp: " << std::dec << temp << " C" << endl;
-#endif
-    return temp; // in celcisus
+    return temp;
   }
   return 0;
 }
@@ -117,4 +107,52 @@ double BMP180::readAltitude()
 double BMP180::readSeaLevelPressure()
 {
   return 0;
+}
+
+UINT16 BMP180::_readRawTemperature()
+{
+  UINT16 retval = 0;
+  _i2c->writeCommand (1, BMP085_READTEMPCMD);
+  usleep(100);
+  bool retval = _i2c->readBytes(BMP085_TEMPDATA, data, 2);
+  if (retval)
+  {
+    retval = (data[0] << 8) | data[1];
+  }
+#ifdef DEBUG
+  cout << "raw temperature: 0x" << std::uppercase << std::hex << retval << endl;
+#endif
+  return retval;
+}
+
+UINT16 BMP180::_readRawPressure()
+{
+  _i2c->writeCommand(1, BMP085_READPRESSURECMD);
+  switch (_mode)
+  {
+    case BMP085_ULTRALOWPOWER:
+      usleep(5000);
+      break;
+    case BMP085_HIGHRES:
+      usleep(14000);
+      break;
+    case BMP085_ULTRAHIGHRES:
+      usleep(26000);
+      break;
+    default:
+      usleep(8000);
+  }
+
+  UINT8 data;
+  _i2c->readBytes(BMP085_PRESSUREDATA, &data, 1);
+  UINT8 msb = data;
+  _i2c->readBytes(BMP085_PRESSUREDATA+1, &data, 1);
+  UINT8 lsb = data;
+  _i2c->readBytes(BMP085_PRESSUREDATA+2, &data, 1);
+  UINT8 xlsb = data;
+  UINT16 retval = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - _mode);
+#ifdef DEBUG
+  cout << "raw pressure: 0x" << std::uppercase << std::hex << retval << endl;
+#endif
+  return reval;
 }

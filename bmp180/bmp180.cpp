@@ -93,7 +93,7 @@ double BMP180::readTemperature()
   return temp;
 }
 
-UINT16 BMP180::readPressure()
+UINT32 BMP180::readPressure()
 {
   UINT16 UT = _readRawTemperature();
   UINT32 UP = _readRawPressure();
@@ -145,11 +145,11 @@ UINT16 BMP180::readPressure()
   return p;
 }
 
-double BMP180::readAltitude(UINT16 seaLevelPressure)
+double BMP180::readAltitude(UINT32 seaLevelPressure)
 {
   double altitude = 0;
-  float pressure = readPressure();
-  altitude = 44330.0 * (1.0 - pow(pressure / seaLevelPressure, 0.1903));
+  double pressure = readPressure();
+  altitude = (44330.0 * (1.0 - pow(pressure / seaLevelPressure, 0.1903)));
 #ifdef DEBUG
   cout << "altitude: " << std::dec << altitude << endl;
 #endif

@@ -111,14 +111,14 @@ bool I2C::writeBytes (UINT8 *data, int size)
       return false;
 
 #ifdef DEBUG
-  std::cout << "Writing: ";
+  std::cout << "Writing: " << std::uppercase;
   for (int i=0; i<size; i++)
     {
       if (i > 0)
         std::cout << ", ";
-      std::cout << std::hex << (int)data[i];
+      std::cout << "0x" << std::hex << (int)data[i];
     }
-  std::cout << " to address " << std::hex << (int)deviceAddr_ << std::endl;
+  std::cout << " to address 0x" << std::hex << (int)deviceAddr_ << std::endl;
 #endif
    if (write(device_, data, size) != size)
    {

@@ -34,8 +34,20 @@ void BMP180::_init()
   _cal_AC5 = _readU16(data);
   _i2c->readBytes(BMP085_CAL_AC6, data, 2);
   _cal_AC6 = _readU16(data);
+  _i2c->readBytes(BMP085_CAL_MC, data, 2);
+  _cal_MC = _readS16(data);
+  _i2c->readBytes(BMP085_CAL_MD, data, 2);
+  _cal_MD = _readS16(data);
 #ifdef DEBUG
-  cout << "calibrated values read:" << endl;
+  cout << "calibrated values read:" << std::dec << endl;
+  cout << "_cal_AC1: " << _cal_AC1 << endl;
+  cout << "_cal_AC2: " << _cal_AC2 << endl;
+  cout << "_cal_AC3: " << _cal_AC3 << endl;
+  cout << "_cal_AC4: " << _cal_AC4 << endl;
+  cout << "_cal_AC5: " << _cal_AC5 << endl;
+  cout << "_cal_AC6: " << _cal_AC6 << endl;
+  cout << "_cal_MC: " << _cal_MC << endl;
+  cout << "_cal_MD: " << _cal_MD << endl;
 #endif
 }
 
@@ -71,6 +83,14 @@ double BMP180::readTemperature()
 #ifdef DEBUG
     cout << "raw temperature: 0x" << std::hex << rawTemp << endl;
 #endif
+    int X1 = ((rawTemp - _cal_AC6) * _cal_AC5) >> 15;
+    int X2 = ((_cal_MC << 11) / (X1 + _cal_MD));
+    int B5 = X1 + X2;
+    double temp = ((B5 + 8) >> 4) / 10.0;
+#ifdef DEBUG
+    cout << "temp: " << std::dec << temp << " C" << endl;
+#endif
+    return temp; // in celcisus
   }
   return 0;
 }

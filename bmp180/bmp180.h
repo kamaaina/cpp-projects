@@ -46,7 +46,7 @@ class BMP180
     int _readS16(UINT8 *data);
     int _readS8(UINT8 *data);
     UINT16 _readRawTemperature();
-    UINT16 _readRawPressure();
+    UINT32 _readRawPressure();
 
     I2C* _i2c;
     int _cal_AC1, _cal_AC2, _cal_AC3, _cal_B1, _cal_B2, _cal_MB, _cal_MC, _cal_MD, _mode;

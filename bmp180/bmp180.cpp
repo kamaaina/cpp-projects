@@ -96,7 +96,7 @@ double BMP180::readTemperature()
 UINT16 BMP180::readPressure()
 {
   UINT16 UT = _readRawTemperature();
-  UINT16 UP = _readRawPressure();
+  UINT32 UP = _readRawPressure();
   UINT16 p = 0x00;
 
   // temperature
@@ -115,7 +115,11 @@ UINT16 BMP180::readPressure()
   X2 = (_cal_B1 * ((B6 * B6) >> 12)) >> 16;
   X3 = ((X1 + X2) + 2) >> 2;
   int B4 = (_cal_AC4 * (X3 + 32768)) >> 15;
-  UINT16 B7 = (UP - B3) * (50000 >> _mode);
+cout << "UP: " << dec << UP << endl;
+cout << "B3: " << dec << B3 << endl;
+cout << "shift: " << dec << (50000 >> _mode) << endl;
+
+  UINT32 B7 = ((UP - B3) * (50000 >> _mode));
 
   if (B7 < 0x80000000)
     p = (B7 * 2) / B4;
@@ -126,10 +130,21 @@ UINT16 BMP180::readPressure()
   X1 = (X1 * 3038) >> 16;
   X2 = (-7357 * p) >> 16;
 
+#ifdef DEBUG
+  cout << "mode: " << dec << _mode << endl;
+  cout << "B5: " << dec << B5 << endl;
+  cout << "B6: " << dec << B6 << endl;
+  cout << "B3: " << dec << B3 << endl;
+  cout << "B4: " << dec << B4 << endl;
+  cout << "B7: " << dec << B7 << endl;
+#endif
+
   p = p + ((X1 + X2 + 3791) >> 4);
+
 #ifdef DEBUG
   cout << "pressure: " << std::dec << p << endl;
 #endif
+
   return p;
 }
 
@@ -163,7 +178,7 @@ UINT16 BMP180::_readRawTemperature()
   return retval;
 }
 
-UINT16 BMP180::_readRawPressure()
+UINT32 BMP180::_readRawPressure()
 {
   _i2c->writeCommand(1, BMP085_READPRESSURECMD);
   switch (_mode)
@@ -181,14 +196,14 @@ UINT16 BMP180::_readRawPressure()
       usleep(8000);
   }
 
-  UINT8 data;
+  UINT8 data = 0x00;
   _i2c->readBytes(BMP085_PRESSUREDATA, &data, 1);
   UINT8 msb = data;
   _i2c->readBytes(BMP085_PRESSUREDATA+1, &data, 1);
   UINT8 lsb = data;
   _i2c->readBytes(BMP085_PRESSUREDATA+2, &data, 1);
   UINT8 xlsb = data;
-  UINT16 retval = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - _mode);
+  UINT32 retval = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - _mode);
 #ifdef DEBUG
   cout << "raw pressure: 0x" << std::uppercase << std::hex << retval << endl;
 #endif

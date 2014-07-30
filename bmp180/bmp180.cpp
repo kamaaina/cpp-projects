@@ -97,7 +97,7 @@ UINT16 BMP180::readPressure()
 {
   UINT16 UT = _readRawTemperature();
   UINT32 UP = _readRawPressure();
-  UINT16 p = 0x00;
+  UINT32 p = 0x00;
 
   // temperature
   int X1 = ((UT - _cal_AC6) * _cal_AC5) >> 15;
@@ -115,9 +115,6 @@ UINT16 BMP180::readPressure()
   X2 = (_cal_B1 * ((B6 * B6) >> 12)) >> 16;
   X3 = ((X1 + X2) + 2) >> 2;
   int B4 = (_cal_AC4 * (X3 + 32768)) >> 15;
-cout << "UP: " << dec << UP << endl;
-cout << "B3: " << dec << B3 << endl;
-cout << "shift: " << dec << (50000 >> _mode) << endl;
 
   UINT32 B7 = ((UP - B3) * (50000 >> _mode));
 

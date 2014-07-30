@@ -1,11 +1,29 @@
-#include "bmp180.h"
-#include "i2c.h"
-#include <iostream>
+/*
+Author: Mike White (mike808@gmail.com; @mikewhite808)
+
+Implementation for reading data from BMP180 breakout board from Adafruit.
+https://www.adafruit.com/product/1603
+
+Code below heavily used the Adafruit Python implementation of BMP085 found here:
+https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code/blob/master/Adafruit_BMP085/Adafruit_BMP085.py
+*/
+
 #include <unistd.h>
 #include <math.h>
+#include "bmp180.h"
+#include "i2c.h"
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 using namespace std;
 
+/************************************************************
+ * Constructor
+ *
+ * Parameters:
+ *   mode - the mode to run in (default is BMP085_STANDARD)
+ ***********************************************************/
 BMP180::BMP180(int mode)
   : _i2c(0), _cal_AC1(0), _cal_AC2(0), _cal_AC3(0), _cal_B1(0), _cal_B2(0), _cal_MB(0),
     _cal_MC(0), _cal_MD(0), _mode(mode), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
@@ -14,12 +32,19 @@ BMP180::BMP180(int mode)
   _init();
 }
 
+/************************************************************
+ * Destructor
+ ***********************************************************/
 BMP180::~BMP180()
 {
   delete _i2c;
   _i2c = 0;
 }
 
+/************************************************************
+ * Reads the calibrated values that will be used for
+ * calculations
+ ***********************************************************/
 void BMP180::_init()
 {
   UINT8 data[2];
@@ -61,17 +86,41 @@ void BMP180::_init()
 #endif
 }
 
-int BMP180::_readU16(UINT8 *data)
+/************************************************************
+ * Reads an unsigned 16-bit value
+ *
+ * Parameters:
+ *   data - the data to read the values from
+ *
+ * Returns a unsigned 16-bit value
+ ***********************************************************/
+UINT16 BMP180::_readU16(UINT8 *data)
 {
   return ((data[0] << 8) | data[1]);
 }
 
+/************************************************************
+ * Reads a signed 16-bit value
+ *
+ * Parameters:
+ *   data - the data to read the values from
+ *
+ * Returns a signed 16-bit value
+ ***********************************************************/
 int BMP180::_readS16(UINT8 *data)
 {
   int hi = _readS8(&data[0]);
   return ((hi << 8) | data[1]);
 }
 
+/************************************************************
+ * Reads a signed 8-bit value
+ *
+ * Parameters:
+ *   data - the data to read the values from
+ *
+ * Returns a signed 8-bit value
+ ***********************************************************/
 int BMP180::_readS8(UINT8 *data)
 {
   if (data[0] > 127)
@@ -80,6 +129,11 @@ int BMP180::_readS8(UINT8 *data)
     return (int)data[0];
 }
 
+/************************************************************
+ * Reads the temperature in degrees celsius
+ *
+ * Returns the temperature in pascal
+ ***********************************************************/
 double BMP180::readTemperature()
 {
   UINT16 rawTemp = _readRawTemperature();
@@ -93,6 +147,11 @@ double BMP180::readTemperature()
   return temp;
 }
 
+/************************************************************
+ * Reads the pressure in pascal
+ *
+ * Returns the pressure in pascal
+ ***********************************************************/
 UINT32 BMP180::readPressure()
 {
   UINT16 UT = _readRawTemperature();
@@ -145,6 +204,14 @@ UINT32 BMP180::readPressure()
   return p;
 }
 
+/************************************************************
+ * Reads the altitude in meters
+ *
+ * Parameters:
+ *   seaLevelPressure - the pressure at sea level default
+ *                      value is 101325
+ * Returns the altitude in meters
+ ***********************************************************/
 double BMP180::readAltitude(UINT32 seaLevelPressure)
 {
   double altitude = 0;
@@ -161,6 +228,11 @@ double BMP180::readSeaLevelPressure()
   return 0;
 }
 
+/************************************************************
+ * Reads the raw temperature
+ *
+ * Returns the raw temperature reading
+ ***********************************************************/
 UINT16 BMP180::_readRawTemperature()
 {
   UINT8 data[2];
@@ -175,6 +247,11 @@ UINT16 BMP180::_readRawTemperature()
   return retval;
 }
 
+/************************************************************
+ * Reads the raw pressure
+ *
+ * Returns the raw pressure reading
+ ***********************************************************/
 UINT32 BMP180::_readRawPressure()
 {
   _i2c->writeCommand(1, BMP085_READPRESSURECMD);

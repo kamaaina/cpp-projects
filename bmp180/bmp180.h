@@ -42,7 +42,7 @@ class BMP180
 
   private:
     void _init();
-    int _readU16(UINT8 *data);
+    UINT16 _readU16(UINT8 *data);
     int _readS16(UINT8 *data);
     int _readS8(UINT8 *data);
     UINT16 _readRawTemperature();

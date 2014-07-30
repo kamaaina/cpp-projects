@@ -3,7 +3,7 @@ OBJDIR   = obj
 BINDIR   = bin
 $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
-DEBUG    = 1
+DEBUG    = 0
 CC       = g++
 CFLAGS   = -Wall -I../i2c
 LINC     = -L../i2c/bin

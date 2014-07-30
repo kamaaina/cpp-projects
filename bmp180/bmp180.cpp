@@ -223,9 +223,16 @@ double BMP180::readAltitude(UINT32 seaLevelPressure)
   return altitude;
 }
 
+/************************************************************
+ * Reads the sea level pressure in pascal
+ *
+ * Returns the sea level pressure in pascal
+ ***********************************************************/
 double BMP180::readSeaLevelPressure()
 {
-  return 0;
+  double pressure = readPressure();
+  double altitude = readAltitude();
+  return (pressure / pow(1.0 - altitude/44330.0, 5.255));
 }
 
 /************************************************************

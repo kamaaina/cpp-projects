@@ -32,7 +32,7 @@ class I2C;
 class BMP180
 {
   public:
-    BMP180();
+    BMP180(int mode=BMP085_STANDARD);
     ~BMP180();
 
     double readTemperature();

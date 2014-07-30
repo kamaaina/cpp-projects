@@ -5,9 +5,9 @@
 
 using namespace std;
 
-BMP180::BMP180(int mode=BMP085_STANDARD)
+BMP180::BMP180(int mode)
   : _i2c(0), _cal_AC1(0), _cal_AC2(0), _cal_AC3(0), _cal_B1(0), _cal_B2(0), _cal_MB(0),
-    _cal_MC(0), _cal_MD(0), , _mode(mode), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
+    _cal_MC(0), _cal_MD(0), _mode(mode), _cal_AC4(0), _cal_AC5(0), _cal_AC6(0)
 {
   _i2c = new I2C(0x77, 0xF4);
   _init();
@@ -89,9 +89,7 @@ double BMP180::readTemperature()
 #ifdef DEBUG
   cout << "temp: " << std::dec << temp << " C" << endl;
 #endif
-    return temp;
-  }
-  return 0;
+  return temp;
 }
 
 double BMP180::readPressure()
@@ -111,14 +109,11 @@ double BMP180::readSeaLevelPressure()
 
 UINT16 BMP180::_readRawTemperature()
 {
+  UINT8 data[2];
   UINT16 retval = 0;
   _i2c->writeCommand (1, BMP085_READTEMPCMD);
-  usleep(100);
-  bool retval = _i2c->readBytes(BMP085_TEMPDATA, data, 2);
-  if (retval)
-  {
+  if (_i2c->readBytes(BMP085_TEMPDATA, data, 2))
     retval = (data[0] << 8) | data[1];
-  }
 #ifdef DEBUG
   cout << "raw temperature: 0x" << std::uppercase << std::hex << retval << endl;
 #endif
@@ -154,5 +149,5 @@ UINT16 BMP180::_readRawPressure()
 #ifdef DEBUG
   cout << "raw pressure: 0x" << std::uppercase << std::hex << retval << endl;
 #endif
-  return reval;
+  return retval;
 }

@@ -154,6 +154,7 @@ UINT16 BMP180::_readRawTemperature()
   UINT8 data[2];
   UINT16 retval = 0;
   _i2c->writeCommand (1, BMP085_READTEMPCMD);
+  usleep(5000);
   if (_i2c->readBytes(BMP085_TEMPDATA, data, 2))
     retval = (data[0] << 8) | data[1];
 #ifdef DEBUG

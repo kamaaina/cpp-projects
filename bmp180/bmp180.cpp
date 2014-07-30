@@ -94,12 +94,48 @@ double BMP180::readTemperature()
 
 double BMP180::readPressure()
 {
-  return 0;
+  UINT16 UT = _readRawTemperature();
+  UINT16 UP = _readRawPressure();
+  double p = 0;
+
+  // temperature
+  int X1 = ((UT - _cal_AC6) * _cal_AC5) >> 15;
+  int X2 = (_cal_MC << 11) / (X1 + _cal_MD);
+  int B5 = X1 + X2;
+
+  // pressure
+  int B6 = B5 - 4000;
+  X1 = (_cal_B2 * (B6 * B6) >> 12) >> 11;
+  X2 = (_cal_AC2 * B6) >> 11;
+  int X3 = X1 + X2;
+  int B3 = (((_cal_AC1 * 4 + X3) << _mode) + 2) / 4;
+
+  X1 = (_cal_AC3 * B6) >> 13;
+  X2 = (_cal_B1 * ((B6 * B6) >> 12)) >> 16;
+  X3 = ((X1 + X2) + 2) >> 2;
+  int B4 = (_cal_AC4 * (X3 + 32768)) >> 15;
+  int B7 = (UP - B3) * (50000 >> _mode);
+
+  if (B7 < 0x80000000)
+    p = (B7 * 2) / B4;
+  else
+    p = (B7 / B4) * 2;
+
+  X1 = (p >> 8) * (p >> 8);
+  X1 = (X1 * 3038) >> 16;
+  X2 = (-7357 * p) >> 16;
+
+  p = p + ((X1 + X2 + 3791) >> 4);
+
+  return p;
 }
 
-double BMP180::readAltitude()
+double BMP180::readAltitude(UINT16 seaLevelPressure)
 {
-  return 0;
+  double altitude = 0;
+  float pressure = readPressure();
+  altitude = 44330.0 * (1.0 - pow(pressure / seaLevelPressure, 0.1903));
+  return altitude;
 }
 
 double BMP180::readSeaLevelPressure()

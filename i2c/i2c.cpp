@@ -1,3 +1,12 @@
+/*
+Author: Mike White (mike808@gmail.com; @mikewhite808)
+
+Code currently works out of the box for Rasperry Pi but needs a few
+tweaks for the beaglebone black. I was able to get it to work on the
+BBB so let me know if you have trouble. In the next release, I'll
+update this code to work out of the box for both RPI and BBB.
+*/
+
 #include <unistd.h>
 #include <cstdarg>
 #include <sys/ioctl.h>

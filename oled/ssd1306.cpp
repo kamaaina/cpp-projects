@@ -1,3 +1,16 @@
+/*
+Author: Mike White (mike808@gmail.com; @mikewhite808)
+
+Implementation for using a 128x64 OLED display from Adafruit.
+https://www.adafruit.com/products/938
+
+Code can easily be modified to work with a 128x32 OLED display from Adafruit.
+Just modify the HEIGHT to be 4 and that should be it. Of course I have not
+tested it as I do not own a 128x32 OLED.
+https://www.adafruit.com/products/931
+
+*/
+
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>

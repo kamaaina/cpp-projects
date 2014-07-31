@@ -1,5 +1,5 @@
-#ifndef _BMP180_H_
-#define _BMP180_H_
+#ifndef BMP180_H_
+#define BMP180_H_
 
 #include "../common/common.h"
 
@@ -53,4 +53,4 @@ class BMP180
     UINT16 _cal_AC4, _cal_AC5, _cal_AC6;
 };
 
-#endif /* _BMP180_H_ */
+#endif /* BMP180_H_ */

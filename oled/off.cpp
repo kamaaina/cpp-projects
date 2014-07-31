@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// simple program to turn off OLED
+// simple program to turn off the OLED display
 
 int main ()
 {

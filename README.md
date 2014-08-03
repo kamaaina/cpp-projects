@@ -16,7 +16,7 @@ http://pauhanafun.blogspot.com
 
 To install:
 <ol>
-<li>git clone git@github.com:kamaaina/cpp-projects.git</li>
+<li>git clone https://github.com/kamaaina/cpp-projects.git</li>
 <li>cd cpp-projects</li>
 <li>make</li>
 </ol>

@@ -1,4 +1,4 @@
-PROGRAM  = bmp180-test
+PROGRAM  = $(BINDIR)/bmp180-test
 OBJDIR   = obj
 BINDIR   = bin
 $(shell mkdir -p $(OBJDIR) $(BINDIR))
@@ -20,7 +20,7 @@ ALLOBJS = $(OBJS:%.cpp=$(OBJDIR)/%.o)
 ALL: $(PROGRAM)
 
 $(PROGRAM): $(ALLOBJS)
-	$(CC) $(CFLAGS) -o $(BINDIR)/$@ $(ALLOBJS) $(LINC) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(ALLOBJS) $(LINC) $(LIBS)
 
 $(OBJDIR)/%.o : %.cpp
 	$(CC) $(CFLAGS) -c $*.cpp -o $(OBJDIR)/$*.o

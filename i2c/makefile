@@ -1,4 +1,4 @@
-LIBRARY  = libi2c.a
+LIBRARY  = $(BINDIR)/libi2c.a
 AR       = ar
 ARFLAGS  = rcs
 OBJDIR   = obj
@@ -21,7 +21,7 @@ ALLOBJS = $(OBJS:%.cpp=$(OBJDIR)/%.o)
 ALL: $(LIBRARY)
 
 $(LIBRARY): $(ALLOBJS)
-	$(AR) $(ARFLAGS) -o $(BINDIR)/$@ $(ALLOBJS)
+	$(AR) $(ARFLAGS) -o $@ $(ALLOBJS)
 
 $(OBJDIR)/%.o : %.cpp
 	$(CC) $(CFLAGS) -c $*.cpp -o $(OBJDIR)/$*.o

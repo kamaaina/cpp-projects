@@ -4,6 +4,7 @@ This project contains an implementation for I2C to work with the Raspberry Pi an
 Currently supported products are:
 <ul>
 <li><a href="https://www.adafruit.com/product/1603">Adafruit BMP180</a></li>
+<li><a href="https://www.adafruit.com/products/1782">Adafruit MCP9808</a></li>
 <li><a href="https://www.adafruit.com/products/938">Adafruit 128x64 OLED</a></li>
 </ul>
 I plan to add support for more items as I get my hands on them.

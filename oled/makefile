@@ -1,4 +1,4 @@
-PROGRAM  = image-test
+PROGRAM  = $(BINDIR)/image-test
 LCD_OFF  = lcd-off
 OBJDIR   = obj
 BINDIR   = bin
@@ -21,10 +21,10 @@ ALLOBJS = $(OBJS:%.cpp=$(OBJDIR)/%.o)
 ALL: $(PROGRAM) $(LCD_OFF)
 
 $(PROGRAM): $(ALLOBJS)
-	$(CC) $(CFLAGS) -o $(BINDIR)/$@ $(ALLOBJS) $(LINC) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(ALLOBJS) $(LINC) $(LIBS)
 
 $(LCD_OFF): $(ALLOBJS)
-	$(CC) $(CFLAGS) off.cpp -o $(BINDIR)/$(LCD_OFF) $(LINC) $(LIBS)
+	$(CC) $(CFLAGS) off.cpp -o $(LCD_OFF) $(LINC) $(LIBS)
 
 $(OBJDIR)/%.o : %.cpp
 	$(CC) $(CFLAGS) -c $*.cpp -o $(OBJDIR)/$*.o
